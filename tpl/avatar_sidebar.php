@@ -3,7 +3,7 @@
 	<md-content layout-margin ng-controller="AvatarSidebarCtrl" class="gwf-avatar-bar">
 
 		<div><?php echo $lang->lang('info_your_avatar'); ?></div>
-		<?php echo GWF_AvatarFile::avatar($user); ?>
+		<?php echo GWF_Avatar::userAvatar($user); ?>
 
 		<section layout="row" flex>
 			<md-button href="<?php echo $href_upload; ?>">Upload</md-button>

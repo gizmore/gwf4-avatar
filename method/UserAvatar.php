@@ -1,5 +1,5 @@
 <?php
-final class GWF_Avatar extends GWF_Method
+final class Avatar_UserAvatar extends GWF_Method
 {
 	private $path;
 	
