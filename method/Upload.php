@@ -1,10 +1,7 @@
 <?php
 final class Avatar_Upload extends GWF_Method
 {
-	public function isLoginRequired()
-	{
-		return !$this->module->cfgGuestAvatars();
-	}
+	public function isLoginRequired() { return !$this->module->cfgGuestAvatars(); }
 	
 	public function execute()
 	{
@@ -18,31 +15,26 @@ final class Avatar_Upload extends GWF_Method
 		return $this->templateUpload();
 	}
 	
-	private function onUpload()
-	{
-		$form = $this->form();
-		if (false !== ($error = $form->validate($this->module)))
-		{
-			return $error.$this->templateUpload();
-		}
-		
-		if (!GWF_Avatar::saveFlowAvatar(GWF_User::getStaticOrGuest(), $form->getVar('custom_avatar'), $form->getVar('default_avatar')))
-		{
-			return GWF_HTML::err('ERR_DATABASE', array(__FILE__, __LINE__));
-		}
-		
-		$form->cleanup();
-		return $this->module->message('msg_uploaded');
-	}
-	
 	private function form()
 	{
 		$data = array();
-		$data['custom_avatar'] = array(GWF_Form::FILE_IMAGE, '', $this->module->lang('th_avatar'));
-		$data['default_avatar'] = array(GWF_Form::SELECT, $this->module->template('default_avatars.php'));
+		$data['custom_avatar'] = array(GWF_Form::FILE_IMAGE, '', $this->module->lang('th_custom_avatar'));
+		$data['default_avatar'] = array(GWF_Form::SELECT, $this->templateDefaultSelect());
 		$data['only_one_kind'] = array(GWF_Form::VALIDATOR);
 		$data['upload'] = array(GWF_Form::SUBMIT, $this->module->lang('btn_upload'));
 		return new GWF_Form($this, $data);
+	}
+	
+	private function templateDefaultSelect()
+	{
+		$user = GWF_User::getStaticOrGuest();
+		$avatar = GWF_Avatar::avatarForUser($user);
+		$tVars = array(
+			'user' => $user,
+			'key' => 'default_avatar',
+			'selectedValue' => $avatar->getDefaultAvatarFilename(),
+		);
+		return $this->module->template('default_avatars.php', $tVars);
 	}
 	
 	private function templateUpload()
@@ -53,16 +45,28 @@ final class Avatar_Upload extends GWF_Method
 		return $this->module->template('upload_avatar.php', $tVars);
 	}
 	
-	public function validate_custom_avatar(Module_Avatar $m, $arg)
+	private function onUpload()
 	{
-		return GWF_Avatar::validateCustomAvatar($arg, $m->cfgAvatarMaxSize(), explode(',', $m->cfgImageFormats()));
+		$form = $this->form();
+		if (false !== ($error = $form->validate($this->module)))
+		{
+			return $error.$this->templateUpload();
+		}
+	
+		if (!GWF_Avatar::saveFlowAvatar(GWF_User::getStaticOrGuest(), $form->getVar('custom_avatar'), $form->getVar('default_avatar')))
+		{
+			return GWF_HTML::err('ERR_DATABASE', array(__FILE__, __LINE__));
+		}
+	
+		$form->cleanup();
+		return $this->module->message('msg_uploaded');
 	}
 	
-	public function validate_default_avatar(Module_Avatar $m, $arg)
-	{
-		return GWF_Avatar::validateDefaultAvatar($arg);
-	}
-
+	##################
+	### Validation ###
+	##################
+	public function validate_custom_avatar(Module_Avatar $m, $arg) { return GWF_Avatar::validateCustomAvatar($arg, $m->cfgAvatarMaxSize(), explode(',', $m->cfgImageFormats())); }
+	public function validate_default_avatar(Module_Avatar $m, $arg) { return GWF_Avatar::validateDefaultAvatar($arg); }
 	public function validate_only_one_kind(Module_Avatar $m, $arg)
 	{
 		$form = $this->form();
