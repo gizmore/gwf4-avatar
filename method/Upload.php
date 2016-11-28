@@ -21,7 +21,7 @@ final class Avatar_Upload extends GWF_Method
 		$data['custom_avatar'] = array(GWF_Form::FILE_IMAGE, '', $this->module->lang('th_custom_avatar'));
 		$data['default_avatar'] = array(GWF_Form::SELECT, $this->templateDefaultSelect());
 		$data['only_one_kind'] = array(GWF_Form::VALIDATOR);
-		$data['upload'] = array(GWF_Form::SUBMIT, $this->module->lang('btn_upload'));
+		$data['upload'] = array(GWF_Form::SUBMIT, $this->module->lang('btn_change'));
 		return new GWF_Form($this, $data);
 	}
 	
@@ -50,6 +50,7 @@ final class Avatar_Upload extends GWF_Method
 		$form = $this->form();
 		if (false !== ($error = $form->validate($this->module)))
 		{
+			$form->cleanup();
 			return $error.$this->templateUpload();
 		}
 	
