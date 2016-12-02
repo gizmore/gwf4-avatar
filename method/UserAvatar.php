@@ -6,7 +6,7 @@ final class Avatar_UserAvatar extends GWF_Method
 	public function getHTAccess()
 	{
 		return
-			'RewriteRule ^avatar/custom/([^/]+)/([^/]+)/([^/]+)/?$ index.php?mo=Avatar&me=UserAvatar&mode=custom&dir=$1&id=$2&file=$3 [QSA]'.PHP_EOL.
+			'RewriteRule ^avatar/custom/([^/]+)/([^/]+)/?$ index.php?mo=Avatar&me=UserAvatar&mode=custom&user=$1&file=$2 [QSA]'.PHP_EOL.
 			'RewriteRule ^avatar/default/([^/]+)/?$ index.php?mo=Avatar&me=UserAvatar&mode=default&file=$1 [QSA]'.PHP_EOL;
 	}
 	
@@ -21,13 +21,12 @@ final class Avatar_UserAvatar extends GWF_Method
 	private function validate()
 	{
 		$mode = Common::getGetString('mode');
-		$file = Common::getGetString('file');
+		$file = preg_replace('#[/\\\\]#', '', Common::getGetString('file'));
 		
 		if ($mode === 'custom')
 		{
-			$dir = Common::getGetString('dir');
-			$id = Common::getGetString('id');
-			$this->path = sprintf('%sdbimg/avatar/%s/%s/%s', GWF_PATH, $dir, $id, $file);
+			$user = preg_replace('/[^a-z0-9]/i', '', Common::getGetString('user'));
+			$this->path = sprintf('%sdbimg/avatar/user/%s/%s', GWF_PATH, $user, $file);
 		}
 		else
 		{

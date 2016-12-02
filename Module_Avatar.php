@@ -41,8 +41,9 @@ final class Module_Avatar extends GWF_Module
 	public function onStartup()
 	{
 		$this->addCSS("avatar.css");
+		$this->addJavascript('gwf-avatar.js');
 		$this->addJavascript('gwf-avatar-sidebar-controller.js');
-	}
+		}
 
 	######################
 	### Avatar Sidebar ###
