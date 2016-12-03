@@ -31,7 +31,6 @@ function GWF_Avatar(user) {
 		if (mode === 'custom') {
 			var user_id = this.USER.JSON.avatar.avatar_user_id;
 			var version = this.USER.JSON.avatar.avatar_version;
-			var user_id = this.USER.id();
 			return sprintf('%savatar/%s/%s/%s?v=%s', GWF_WEB_ROOT, mode, user_id, file, version);
 		}
 		else {
