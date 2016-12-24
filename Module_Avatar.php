@@ -12,7 +12,7 @@ final class Module_Avatar extends GWF_Module
 	public function getVersion() { return 4.00; }
 	public function getDefaultPriority() { return 50; }
 	public function getDefaultAutoLoad() { return true; }
-	public function onLoadLanguage() { GWF_Avatar::loadLanguage(GWF_PATH.'module/Avatar/lang/avatar'); return $this->loadLanguage('lang/avatar'); }
+	public function onLoadLanguage() { return $this->loadLanguage('lang/avatar'); }
 
 	public function onInstall($dropTables)
 	{
@@ -43,7 +43,8 @@ final class Module_Avatar extends GWF_Module
 		$this->addCSS("avatar.css");
 		$this->addJavascript('gwf-avatar.js');
 		$this->addJavascript('gwf-avatar-sidebar-controller.js');
-		}
+		GWF_Avatar::loadLanguage(GWF_PATH.'module/Avatar/lang/avatar');
+	}
 
 	######################
 	### Avatar Sidebar ###
