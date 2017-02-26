@@ -19,10 +19,10 @@ final class Module_Avatar extends GWF_Module
 		GWF_File::createDir($this->customAvatarDir());
 		GWF_HTAccess::protect($this->customAvatarDir());
 		return GWF_ModuleLoader::installVars($this, array(
-			'avatar_max_size' => array('32768', 'int', '1024', '1000000'),
-			'avatar_max_dimension' => array('320x240', 'text', '3', '12'),
-			'avatar_img_formats' => array('jpg,gif,png', 'text', '0', '255'),
 			'avatar_for_guests' => array('1', 'bool'),
+			'avatar_max_width' => array('64', 'int', '1', '1024'),
+			'avatar_max_height' => array('64', 'int', '1', '1024'),
+			'avatar_max_size' => array('32768', 'int', '1024', '1000000'),
 		));
 	}
 	public function customAvatarDir()  { return GWF_PATH.'dbimg/avatar'; }
@@ -30,10 +30,10 @@ final class Module_Avatar extends GWF_Module
 	##############
 	### Config ###
 	##############
-	public function cfgAvatarMaxSize() { return $this->getModuleVarInt('avatar_max_size', '32768'); }
-	public function cfgAvatarMaxDimension() { return $this->getModuleVarInt('avatar_max_dimension', '320x240'); }
-	public function cfgImageFormats() { return $this->getModuleVar('avatar_img_formats', 'jpg,gif,png'); }
 	public function cfgGuestAvatars() { return $this->getModuleVarBool('avatar_for_guests', '1'); }
+	public function cfgAvatarMaxWidth() { return $this->getModuleVarInt('avatar_max_width', '64'); }
+	public function cfgAvatarMaxHeight() { return $this->getModuleVarInt('avatar_max_height', '64'); }
+	public function cfgAvatarMaxSize() { return $this->getModuleVarInt('avatar_max_size', '32768'); }
 
 	###############
 	### Startup ###
@@ -62,7 +62,7 @@ final class Module_Avatar extends GWF_Module
 		$this->onLoadLanguage();
 		$tVars = array(
 			'user' => GWF_User::getStaticOrGuest(),
-			'href_upload' => GWF_WEB_ROOT.'index.php?mo=Avatar&amp;me=Upload',
+			'href_upload' => GWF_WEB_ROOT.'index.php?mo=Avatar&me=Upload',
 		);
 		return $this->template('avatar_sidebar.php', $tVars);
 	}

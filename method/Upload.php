@@ -18,21 +18,32 @@ final class Avatar_Upload extends GWF_Method
 	private function form()
 	{
 		$data = array();
-		$data['custom_avatar'] = array(GWF_Form::FILE_IMAGE, '', $this->module->lang('th_custom_avatar'));
+		$data['custom_avatar'] = array(GWF_Form::FILE_IMAGE, '', $this->module->lang('th_custom_avatar'), '', $this->fileUploadParams());
 		$data['default_avatar'] = array(GWF_Form::SELECT, $this->templateDefaultSelect());
 		$data['only_one_kind'] = array(GWF_Form::VALIDATOR);
 		$data['upload'] = array(GWF_Form::SUBMIT, $this->module->lang('btn_change'));
 		return new GWF_Form($this, $data);
 	}
 	
+	private function fileUploadParams()
+	{
+		return array(
+			'maxSize' => $this->module->cfgAvatarMaxSize(),
+			'maxWidth' => $this->module->cfgAvatarMaxWidth(),
+			'maxHeight' => $this->module->cfgAvatarMaxHeight(),
+			'mimeTypes' => GWF_FormImage::$IMAGE_MIME_TYPES,
+		);
+	}
+	
 	private function templateDefaultSelect()
 	{
 		$user = GWF_User::getStaticOrGuest();
 		$avatar = GWF_Avatar::avatarForUser($user);
+		$default = $avatar->getDefaultAvatarFilename();
 		$tVars = array(
 			'user' => $user,
 			'key' => 'default_avatar',
-			'selectedValue' => $avatar->getDefaultAvatarFilename(),
+			'selectedValue' => empty($default) ? 'custom' : $default, 
 		);
 		return $this->module->template('default_avatars.php', $tVars);
 	}
@@ -66,7 +77,7 @@ final class Avatar_Upload extends GWF_Method
 	##################
 	### Validation ###
 	##################
-	public function validate_custom_avatar(Module_Avatar $m, $arg) { return GWF_Avatar::validateCustomAvatar($arg, $m->cfgAvatarMaxSize(), explode(',', $m->cfgImageFormats())); }
+	public function validate_custom_avatar(Module_Avatar $m, $arg) { if ($arg) $_POST['default_avatar'] = ''; return false; }
 	public function validate_default_avatar(Module_Avatar $m, $arg) { return GWF_Avatar::validateDefaultAvatar($arg); }
 	public function validate_only_one_kind(Module_Avatar $m, $arg)
 	{
