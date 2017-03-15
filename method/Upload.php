@@ -48,10 +48,15 @@ final class Avatar_Upload extends GWF_Method
 		return $this->module->template('default_avatars.php', $tVars);
 	}
 	
+	public function templateForm()
+	{
+		return $this->form()->templateY($this->module->lang('ft_upload_avatar'), GWF_WEB_ROOT.'index.php?mo=Avatar&me=Upload');
+	}
+	
 	private function templateUpload()
 	{
 		$tVars = array(
-			'form' => $this->form()->templateY($this->module->lang('ft_upload_avatar')),
+			'form' => $this->templateForm(),
 		);
 		return $this->module->template('upload_avatar.php', $tVars);
 	}
