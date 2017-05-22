@@ -40,10 +40,17 @@ final class Module_Avatar extends GWF_Module
 	###############
 	public function onStartup()
 	{
-		$this->addCSS("avatar.css");
-		$this->addJavascript('gwf-avatar.js');
-		$this->addJavascript('gwf-avatar-sidebar-controller.js');
-		GWF_Avatar::loadLanguage(GWF_PATH.'module/Avatar/lang/avatar');
+		if (!GWF4::isInstall())
+		{
+			$this->addCSS("avatar.css");
+			$this->addJavascript('gwf-avatar.js');
+	
+			if (Module_GWF::instance()->cfgAngularApp())
+			{
+				$this->addJavascript('gwf-avatar-sidebar-controller.js');
+			}
+			GWF_Avatar::loadLanguage(GWF_PATH.'module/Avatar/lang/avatar');
+		}
 	}
 
 	######################

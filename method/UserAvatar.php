@@ -6,8 +6,7 @@ final class Avatar_UserAvatar extends GWF_Method
 	public function getHTAccess()
 	{
 		return
-			'RewriteRule ^avatar/custom/([^/]+)/([^/]+)/?$ index.php?mo=Avatar&me=UserAvatar&mode=custom&user=$1&file=$2 [QSA]'.PHP_EOL.
-			'RewriteRule ^avatar/default/([^/]+)/?$ index.php?mo=Avatar&me=UserAvatar&mode=default&file=$1 [QSA]'.PHP_EOL;
+			'RewriteRule ^avatar/user/([^/]+)/?$ index.php?mo=Avatar&me=UserAvatar&uid=$1 [QSA]'.PHP_EOL;
 	}
 	
 	public function execute()
@@ -20,18 +19,16 @@ final class Avatar_UserAvatar extends GWF_Method
 	
 	private function validate()
 	{
-		$mode = Common::getGetString('mode');
-		$file = preg_replace('#[/\\\\]#', '', Common::getGetString('file'));
+		if (!($user = GWF_User::getByID(Common::getRequestInt('uid'))))
+		{
+			return GWF_HTML::err('ERR_USER');
+		}
+		if (!($avatar = GWF_Avatar::avatarForUser($user)))
+		{
+			return $this->module->error('err_avatar');
+		}
 		
-		if ($mode === 'custom')
-		{
-			$user = preg_replace('/[^a-z0-9]/i', '', Common::getGetString('user'));
-			$this->path = sprintf('%sdbimg/avatar/user/%s/%s', GWF_PATH, $user, $file);
-		}
-		else
-		{
-			$this->path = sprintf('%sthemes/%s/img/default/default_avatars/%s', GWF_PATH, GWF_DEFAULT_DESIGN, $file);
-		}
+		$this->path = GWF_Avatar::filePathForUser($user);
 		
 		if (!GWF_File::isFile($this->path))
 		{
